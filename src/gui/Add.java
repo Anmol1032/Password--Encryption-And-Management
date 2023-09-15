@@ -76,6 +76,7 @@ public class Add extends JPanel {
                     Encrypt.encrypt(mainData, file, p1, p2);
                 } catch (IOException ex) {
                     Misc.showError(ex, main);
+                    return;
                 } catch (IllegalArgumentException ex) {
                     Misc.showError("output is null", main);
                     return;

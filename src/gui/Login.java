@@ -93,9 +93,11 @@ public class Login extends JPanel {
                 });
                 thread.start();
 
-                thisPanel.setVisible(false);
-                main.cp.remove(thisPanel);
-
+                thisPanel.removeAll();
+                GridBagConstraints gbc = new GridBagConstraints();
+                gbc.gridx = 0;
+                gbc.gridy = 0;
+                thisPanel.add(new JLabel(new ImageIcon("Hypersphere.gif")), gbc); // todo
 
                 AbstractAction action = new AbstractAction() {
                     @Override
@@ -104,6 +106,8 @@ public class Login extends JPanel {
                             return;
                         }
 
+                        thisPanel.setVisible(false);
+                        main.cp.remove(thisPanel);
                         if (decrypted.get()) {
                             Enter enterPane = new Enter(main, file, p1, p2, mainData[0]);
                             main.cp.add(enterPane);
@@ -121,6 +125,8 @@ public class Login extends JPanel {
                 Timer timer = new Timer(100, action);
                 timer.start();
 
+                main.invalidate();
+                main.validate();
                 main.repaint();
             }
         });

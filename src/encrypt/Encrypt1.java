@@ -13,8 +13,10 @@ public class Encrypt1 {
             byte value = s[i];
             Random random = new Random(value);
             for (int o = 0; o < b.length; o++) {
-                Random r2 = new Random(random.nextInt());
-                b[o] ^= BigInteger.probablePrime(512, r2).longValue() * 17 + (o ^ i) * 7L ^ 13;
+                Random r1 = new Random(random.nextLong());
+                Random r2 = new Random(random.nextLong());
+                b[o] ^= BigInteger.probablePrime(512, r1).remainder(BigInteger.probablePrime(64, r2))
+                        .longValue() * 17 + (o ^ i) * 7L ^ 13;
             }
         }
 

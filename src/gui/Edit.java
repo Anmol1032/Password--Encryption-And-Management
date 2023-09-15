@@ -221,7 +221,7 @@ public class Edit extends JPanel {
             }
         });
 
-        JButton editButton = new JButton("Conform and Edit mode");
+        JButton editButton = new JButton("Conform and Exit Edit mode");
         editButton.setBorder(new EmptyBorder(0, 0, 0, 0));
         editButton.setForeground(MainGui.rc);
         editButton.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -247,16 +247,46 @@ public class Edit extends JPanel {
         editButton.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
-                    mainData.notes.data = jTextArea.getText();
-                    Encrypt.encrypt(mainData, file, p1, p2);
-                } catch (IOException ex) {
-                    Misc.showError(ex, main);
-                }
+                thisPanel.removeAll();
+                GridBagConstraints gbc = new GridBagConstraints();
+                gbc.gridx = 0;
+                gbc.gridy = 0;
+                thisPanel.add(new JLabel(new ImageIcon("Hypersphere.gif")), gbc);
 
-                thisPanel.setVisible(false);
-                main.cp.remove(thisPanel);
-                main.cp.add(new Enter(main, file, p1, p2, mainData));
+
+                Thread thread = new Thread(() -> {
+                    try {
+                        mainData.notes.data = jTextArea.getText();
+                        Encrypt.encrypt(mainData, file, p1, p2);
+                    } catch (IOException ex) {
+                        Misc.showError(ex, main);
+                    }
+
+                });
+                thread.start();
+
+                Timer timer = new Timer(100, new AbstractAction() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        if (thread.isAlive()) {
+                            return;
+                        }
+
+                        thisPanel.setVisible(false);
+                        main.cp.remove(thisPanel);
+
+                        main.cp.add(new Enter(main, file, p1, p2, mainData));
+                        main.invalidate();
+                        main.validate();
+                        main.repaint();
+                        ((Timer) e.getSource()).stop();
+                    }
+                });
+                timer.start();
+
+                main.invalidate();
+                main.validate();
+                main.repaint();
             }
         });
 
